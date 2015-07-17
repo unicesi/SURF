@@ -1,3 +1,19 @@
+/*
+ * This file is part of WeatherForecastGateway.
+ * 
+ * WeatherForecastGateway is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * WeatherForecastGateway is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with WeatherForecastGateway. If not, see <http://www.gnu.org/licenses/>.
+ */
 package ie.tcd.dsg.surf.weatherforecast.server;
 
 //import java.io.BufferedReader;
@@ -27,14 +43,23 @@ import ie.tcd.dsg.surf.weatherforecast.gateway.WeatherForecast;
 
 /**
  * 
- * @author Andrés Paz, I2T Research Group, Universidad Icesi, Cali - Colombia
+ * @author Andrés Paz <afpaz at icesi.edu.co>, I2T Research Group, Universidad Icesi, Cali - Colombia
  * 
  */
 @SuppressWarnings("restriction")
 public class WeatherForecastServer {
 
+	/**
+	 * 
+	 */
 	private static final int SERVER_PORT = 8085;
+	/**
+	 * 
+	 */
 	private static final String DISCOVERY_SERVER_PROPERTY = "address";
+	/**
+	 * 
+	 */
 	private static final String PROPERTIES_FILE_NAME = "gateway.properties";
 	
 	/**
@@ -46,55 +71,52 @@ public class WeatherForecastServer {
 		try {
 			System.out.println("[INFO] Starting Weather Forecast Server...\n");
 			HttpServer weatherForecastServer = createHttpServer();
-//			weatherForecastServer.start();
 			System.out.println(String.format("\n[INFO] Weather Forecast Server started with WADL available at " + "%sapplication.wadl",	getWeatherForecastURI()));
 			System.out.println("\n[INFO] Started Weather Forecast Server successfully.");
-			System.out.println("\n[INFO] Discovering Weather Forecast Resources...");
+			System.out.println("[INFO] Looking for discovery server address...");
 			WeatherForecast weatherForecast = WeatherForecast.getInstance();
 			int resources = 0;
 			String discoveryServerURI = null;
-//			discoveryServerURI = System.getenv(DISCOVERY_SERVER_PROPERTY);
-//			if (discoveryServerURI == null) {
-//				System.out.println("\n[INFO] Environment variable not found. Looking for properties file...");
-				Properties properties = new Properties();
-				try {
-					String propertiesFilePath = System.getProperty("user.home") + File.separator + PROPERTIES_FILE_NAME;
-					inputStream = new FileInputStream(propertiesFilePath);
-					properties.load(inputStream);
-					discoveryServerURI = properties.getProperty(DISCOVERY_SERVER_PROPERTY);
-					if (discoveryServerURI != null) {
-						if (discoveryServerURI.contains(":")) {
-							if (!discoveryServerURI.startsWith("[")) {
-								discoveryServerURI = "[" + discoveryServerURI;
-							}
-							if (!discoveryServerURI.endsWith("]")) {
-								discoveryServerURI += "]";
-							}
-							discoveryServerURI = "http://" + discoveryServerURI;
+			Properties properties = new Properties();
+			try {
+				String propertiesFilePath = System.getProperty("user.home") + File.separator + PROPERTIES_FILE_NAME;
+				inputStream = new FileInputStream(propertiesFilePath);
+				properties.load(inputStream);
+				discoveryServerURI = properties.getProperty(DISCOVERY_SERVER_PROPERTY);
+				if (discoveryServerURI != null) {
+					System.out.println("[INFO] Discovery server address found. Building URI...");
+					if (discoveryServerURI.contains(":")) {
+						if (!discoveryServerURI.startsWith("[")) {
+							discoveryServerURI = "[" + discoveryServerURI;
 						}
-						weatherForecast.discoverAllResources(discoveryServerURI);
-					} else {
-						System.out.println("\n[WARNING] Property not found. Using test URI...");
-						resources = weatherForecast.discoverAllResources();
+						if (!discoveryServerURI.endsWith("]")) {
+							discoveryServerURI += "]";
+						}
+						discoveryServerURI = "http://" + discoveryServerURI;
 					}
-				} catch (FileNotFoundException e) {
-					System.out.println("\n[ERROR] Properties file not found. Using test URI...");
+					System.out.println("[INFO] Starting discovery thread...");
+					weatherForecast.discoverAllResources(discoveryServerURI);
+					System.out.println("[INFO] Discovery thread started.");
+				} else {
+					System.out.println("\n[WARNING] Property not found. Using test URI...");
 					resources = weatherForecast.discoverAllResources();
-				}  finally {
-					if (inputStream != null) {
-						try {
-							inputStream.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+				}
+			} catch (FileNotFoundException e) {
+				System.out.println("\n[ERROR] Properties file not found. Using test URI...");
+				resources = weatherForecast.discoverAllResources();
+			}  finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
-//			} else {
-//				weatherForecast.discoverAllResources(discoveryServerURI);
-//			}
+			}
 			while (true) {
+				System.out.println("\n[INFO] Discovering Weather Forecast Routes...");
 				resources = weatherForecast.getResourcesDiscovered();
-				System.out.println("\n[INFO] Resources discovered: " + resources);
+				System.out.println("\n[INFO] Total resources discovered: " + resources);
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {

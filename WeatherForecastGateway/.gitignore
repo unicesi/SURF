@@ -1,5 +1,6 @@
 # Local Files #
 *.class
+Californium.properties
 .DS_Store
 
 # Package Files #

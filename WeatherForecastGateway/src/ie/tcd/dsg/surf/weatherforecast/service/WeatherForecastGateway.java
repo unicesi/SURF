@@ -1,3 +1,19 @@
+/*
+ * This file is part of WeatherForecastGateway.
+ * 
+ * WeatherForecastGateway is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * WeatherForecastGateway is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with WeatherForecastGateway. If not, see <http://www.gnu.org/licenses/>.
+ */
 package ie.tcd.dsg.surf.weatherforecast.service;
 
 import javax.ws.rs.GET;
@@ -12,12 +28,16 @@ import ie.tcd.dsg.surf.weatherforecast.utils.WeatherMeasurement;
 
 /**
  * 
- * @author Andrés Paz, I2T Research Group, Universidad Icesi, Cali - Colombia
- *
+ * @author Andrés Paz <afpaz at icesi.edu.co>, I2T Research Group, Universidad Icesi, Cali - Colombia
+ * 
  */
 @Path("weather")
 public class WeatherForecastGateway {
 
+	/**
+	 * 
+	 * @return
+	 */
 	@GET
 	@Path("all")
 	@Produces(MediaType.APPLICATION_XML)
@@ -25,6 +45,10 @@ public class WeatherForecastGateway {
 		return WeatherForecast.getInstance().queryAllResources(WeatherMeasurement.ALL);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@GET
 	@Path("temperature")
 	@Produces(MediaType.APPLICATION_XML)
@@ -32,6 +56,10 @@ public class WeatherForecastGateway {
 		return WeatherForecast.getInstance().queryAllResources(WeatherMeasurement.TEMPERATURE);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@GET
 	@Path("humidity")
 	@Produces(MediaType.APPLICATION_XML)
@@ -39,6 +67,12 @@ public class WeatherForecastGateway {
 		return WeatherForecast.getInstance().queryAllResources(WeatherMeasurement.HUMIDITY);
 	}
 
+	/**
+	 * 
+	 * @param measurement
+	 * @param id
+	 * @return
+	 */
 	@GET
 	@Path("{measurement}/{id}")
 	public Response getMeasurement(@PathParam("measurement") String measurement, @PathParam("id") String id) {
@@ -57,6 +91,12 @@ public class WeatherForecastGateway {
 		return response;
 	}
 	
+	/**
+	 * 
+	 * @param responseCode
+	 * @param message
+	 * @return
+	 */
 	private Response getErrorResponse(String responseCode, String message) {
 		Response response;
 		switch (responseCode) {

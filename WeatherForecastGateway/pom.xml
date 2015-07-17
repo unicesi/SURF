@@ -1,3 +1,19 @@
+<!-- 
+  This file is part of WeatherForecastGateway.
+  
+  WeatherForecastGateway is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  WeatherForecastGateway is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with WeatherForecastGateway. If not, see <http://www.gnu.org/licenses/>.
+ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -9,21 +25,66 @@
 	<name>Weather Forecast Gateway</name>
 	<description>Weather Forecast Gateway for the Raspberry Pi</description>
 	
+	<url>https://github.com/unicesi/surf</url>
+	<inceptionYear>2015</inceptionYear>
+	
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<organization>
+		<name>Trinity College Dublin - The University of Dublin</name>
+		<url>http://www.tcd.ie</url>
+	</organization>
+	
+	<developers>
+		<developer>
+			<id>afpaz</id>
+			<name>Andres Paz</name>
+			<email>afpaz@icesi.edu.co</email>
+			<url>http://www.icesi.edu.co/tics/afpaz</url>
+			<organization>Universidad Icesi</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>apalade</id>
+			<name>Andrei Palade</name>
+			<email>paladea@tcd.ie</email>
+			<organization>Trinity College Dublin</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+	
+	<contributors>
+		<contributor>
+			<name>Universidad Icesi</name>
+			<roles>
+				<role>sponsor</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Departamento Administrativo de Ciencia, Tecnología e Innovación (Colciencias)</name>
+			<roles>
+				<role>sponsor</role>
+			</roles>
+		</contributor>
+	</contributors>
+	
 	<properties>
 		<jdk.version>1.7</jdk.version>
 	</properties>
 	
 	<dependencies>
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.18.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.18.1</version>
-		</dependency> -->
 		<dependency>
 		    <groupId>org.glassfish.jersey.containers</groupId>
 		    <artifactId>jersey-container-jdk-http</artifactId>
@@ -57,20 +118,6 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-jar-plugin</artifactId>
-		        <version>2.6</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>ie.tcd.dsg.surf.weatherforecast.server.WeatherForecastServer</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
