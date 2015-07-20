@@ -265,9 +265,9 @@ public class WeatherForecast {
 				for (WebLink resource : resources.keySet()) {
 					String resourceURI = resource.getURI();
 					String route = resources.get(resource);
-					if (!resourceURI.endsWith("/.well-known/core")) {
+					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
 						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
-							if (resourceURI.endsWith("sht11")) {
+							if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
 								String coapURI = "coap://" + route + ":5683" + resource.getURI();
 								CoapClient coapClient = new CoapClient();
 								coapClient.setURI(coapURI);
@@ -301,7 +301,7 @@ public class WeatherForecast {
 				for (WebLink resource : resources.keySet()) {
 					String resourceURI = resource.getURI();
 					String route = resources.get(resource);
-					if (!resourceURI.endsWith("/.well-known/core")) {
+					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
 						String coapURI = "coap://" + route + ":5683" + resource.getURI();
 						CoapClient coapClient = new CoapClient();
 						coapClient.setURI(coapURI);
