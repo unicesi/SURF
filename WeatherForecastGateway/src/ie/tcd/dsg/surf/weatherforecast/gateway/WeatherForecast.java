@@ -215,7 +215,7 @@ public class WeatherForecast {
 		if (resources.containsKey(resource)) {
 			String route = resources.get(resource);
 			CoapClient coapClient = new CoapClient();
-			coapClient.setURI("coap://[" + route + "]:5683" + resource.getURI());
+			coapClient.setURI("coap://" + route + ":5683" + resource.getURI());
 			CoapResponse coapResponse = coapClient.get();
 			if (coapResponse != null) {
 				if (coapResponse.getCode() == ResponseCode.CONTENT) {
@@ -244,7 +244,7 @@ public class WeatherForecast {
 					if (!resourceURI.endsWith("/.well-known/core")) {
 						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
 							if (resourceURI.endsWith("sht11")) {
-								String coapURI = "coap://[" + route + "]:5683" + resource.getURI();
+								String coapURI = "coap://" + route + ":5683" + resource.getURI();
 								CoapClient coapClient = new CoapClient();
 								coapClient.setURI(coapURI);
 								CoapResponse coapResponse = coapClient.get();
@@ -280,7 +280,7 @@ public class WeatherForecast {
 					String route = resources.get(resource);
 					if (!resourceURI.endsWith("/.well-known/core")) {
 //						if (resourceURI.endsWith(measurement.getValue())) {
-							String coapURI = "coap://[" + route + "]:5683" + resource.getURI();
+							String coapURI = "coap://" + route + ":5683" + resource.getURI();
 							CoapClient coapClient = new CoapClient();
 							coapClient.setURI(coapURI);
 							CoapResponse coapResponse = coapClient.get();
