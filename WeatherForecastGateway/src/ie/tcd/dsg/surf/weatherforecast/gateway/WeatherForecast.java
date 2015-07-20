@@ -29,6 +29,8 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import ie.tcd.dsg.surf.weatherforecast.utils.WeatherMeasurement;
 
 /**
+ * CoAP client that queries CoAP resources providing temperature and humidity information from discovered MOTEs.
+ * This class is a singleton.
  * 
  * @author Andrés Paz <afpaz at icesi.edu.co>, I2T Research Group, Universidad Icesi, Cali - Colombia
  * 
@@ -36,52 +38,53 @@ import ie.tcd.dsg.surf.weatherforecast.utils.WeatherMeasurement;
 public class WeatherForecast {
 
 	/**
-	 * 
+	 * Test URI to discover CoAP resources.
 	 */
 	private static final String MOTE_SERVER_URI = "coap://localhost:5683";
 	/**
-	 * 
+	 * Test CoAP server name.
 	 */
 	private static final String MOTE_SERVER_ADDRESS = "localhost";
 	/**
-	 * 
+	 * CoAP discovery path. It is used when filtering discovered CoAP resources. 
 	 */
 	private static final String COAP_DISCOVERY_PATH = "/.well-known/core";
+	/**
+	 * Weather resource path. It is used when filtering discovered CoAP resources.
+	 */
+	private static final String WEATHER_RESOURCE_PATH = "sht11";
 
 	/**
-	 * 
+	 * Singleton instance.
 	 */
 	private static WeatherForecast weatherForecast;
 	
 	/**
-	 * 
+	 * Reference to the discovery thread instance.
 	 */
 	private DiscoveryThread discoveryThread;
 	/**
-	 * 
-	 */
-	private CoapClient coapClient;
-	/**
-	 * 
+	 * The CoAP resources discovered stored as (Path, IP address) pairs.
 	 */
 	private Map<WebLink, String> resources;
 	/**
-	 * 
+	 * The discovered routes. A route is represented as an IP address.
 	 */
 	private Set<String> discoveredRoutes;
 
 	/**
-	 * 
+	 * Builds a new WeatherForecast instance. Access to the constructor is
+	 * restricted to allow only one instance to exist.
 	 */
 	private WeatherForecast() {
-		this.coapClient = new CoapClient();
 		this.discoveredRoutes = new HashSet<>();
 		this.resources = new HashMap<>();
 	}
 	
 	/**
+	 * Returns the WeatherForecast instance. If no instance exists, one is created.
 	 * 
-	 * @return
+	 * @return The WeatherForecast instance.
 	 */
 	public static WeatherForecast getInstance() {
 		if (weatherForecast == null) {
@@ -91,25 +94,34 @@ public class WeatherForecast {
 	}
 
 	/**
+	 * Discovers all resources in the Test Server and returns the number of discovered resources.
 	 * 
-	 * @return
+	 * @return The number of resources discovered in the Test Server.
 	 */
 	public int discoverAllResources() {
-		this.coapClient.setURI(MOTE_SERVER_URI);
+		// Build a CoAP client.
+		CoapClient coapClient = new CoapClient();
+		// Set the CoAP client's target URI to the Test Server URI.
+		coapClient.setURI(MOTE_SERVER_URI);
 		System.out.println("[INFO] CoAP client set to URI: " + coapClient.getURI());
-		Set<WebLink> discoveredResources = this.coapClient.discover();
-		for (WebLink webLink : discoveredResources) {
-			if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
-				this.resources.put(webLink, MOTE_SERVER_ADDRESS);
-				System.out.println("[INFO] Resource discovered in path: " + webLink);
+		// Discover resources.
+		Set<WebLink> discoveredResources = coapClient.discover();
+		// Filter the discovered resources.
+		if (discoveredResources != null) {
+			for (WebLink webLink : discoveredResources) {
+				if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
+					this.resources.put(webLink, MOTE_SERVER_ADDRESS);
+					System.out.println("[INFO] Resource discovered in path: " + webLink);
+				}
 			}
 		}
 		return this.resources.size();
 	}
 	
 	/**
+	 * Creates and starts a new discovery thread with the given discovery server URI.
 	 * 
-	 * @param discoveryServerURI
+	 * @param discoveryServerURI The discovery server that will be used.
 	 */
 	public void discoverAllResources(String discoveryServerURI) {
 		this.discoveryThread = new DiscoveryThread(this, discoveryServerURI);
@@ -117,7 +129,7 @@ public class WeatherForecast {
 	}
 	
 	/**
-	 * 
+	 * Retrieves discovered routes from the discovery thread and for each one discovers its resources.
 	 */
 	public void notifyNewRoutesFound() {
 		Set<String> discoveredRoutes = this.discoveryThread.getDiscoveredRoutes();
@@ -130,18 +142,36 @@ public class WeatherForecast {
 	}
 	
 	/**
+	 * Discover all resources in the given route. A route is represented as an IP address.
 	 * 
-	 * @param route
+	 * @param route The IP address where the lookup will be directed to. It may be an IPv4 or 
+	 * IPv6 address. In the case of an IPv6 address, it may contain square brackets ([ and ])
+	 * but if it doesn't they are added automatically.
 	 */
 	private void discoverAllResourcesInRoute(String route) {
-		this.coapClient.setURI("coap://[" + route + "]:5683");
+		// Build a CoAP client.
+		CoapClient coapClient = new CoapClient();
+		// If the given route is an IPv6 address, check if it contains square brackets.
+		// If it doesn't then add them.
+		if (route.contains(":")) {
+			if (!route.startsWith("[")) {
+				route = "[" + route;
+			}
+			if (!route.endsWith("]")) {
+				route += "]";
+			}
+		}
+		// Set the CoAP client's target URI to the Test Server URI.
+		coapClient.setURI("coap://" + route + ":5683");
 		System.out.println("[INFO] CoAP client set to URI: " + coapClient.getURI());
-		Set<WebLink> discoveredResources = this.coapClient.discover();
+		// Discover resources.
+		Set<WebLink> discoveredResources = coapClient.discover();
+		// Filter the discovered resources.
 		if (discoveredResources != null) {
 			for (WebLink webLink : discoveredResources) {
 				if (webLink != null) {
 					if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
-						if (webLink.getURI().endsWith("sht11")) {
+						if (webLink.getURI().endsWith(WEATHER_RESOURCE_PATH)) {
 							this.resources.put(webLink, route);
 							System.out.println("[INFO] Resource discovered in path: " + webLink);
 						}
@@ -156,31 +186,35 @@ public class WeatherForecast {
 	}
 	
 	/**
+	 * Returns the total number of resources that have been discovered in the different routes.
 	 * 
-	 * @return
+	 * @return The total number of resources that have been discovered.
 	 */
 	public int getResourcesDiscovered() {
 		return this.resources.size();
 	}
 	
 	/**
-	 * 
+	 * Stops the discovery thread.
 	 */
 	public void stopDiscoveryThread() {
 		this.discoveryThread.stopDiscovery();
 	}
 	
 	/**
+	 * Queries the MOTE with the given ID for the given measurement.
 	 * 
-	 * @param id
-	 * @param measurement
-	 * @return
+	 * @param id The ID of the MOTE.
+	 * @param measurement The requested measurement.
+	 * @return The response from the MOTE if it was found and it responded with the expected measurement.
+	 * A CoAP response code otherwise.
 	 */
 	public String queryResource(String id, String measurement) {
 		WebLink resource = new WebLink("/" + id + (measurement.equals(WeatherMeasurement.ALL) ? "" : "/" + measurement));
 		String response = null;
 		if (resources.containsKey(resource)) {
 			String route = resources.get(resource);
+			CoapClient coapClient = new CoapClient();
 			coapClient.setURI("coap://[" + route + "]:5683" + resource.getURI());
 			CoapResponse coapResponse = coapClient.get();
 			if (coapResponse != null) {
@@ -211,6 +245,7 @@ public class WeatherForecast {
 						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
 							if (resourceURI.endsWith("sht11")) {
 								String coapURI = "coap://[" + route + "]:5683" + resource.getURI();
+								CoapClient coapClient = new CoapClient();
 								coapClient.setURI(coapURI);
 								CoapResponse coapResponse = coapClient.get();
 								if (coapResponse != null) {
@@ -246,6 +281,7 @@ public class WeatherForecast {
 					if (!resourceURI.endsWith("/.well-known/core")) {
 //						if (resourceURI.endsWith(measurement.getValue())) {
 							String coapURI = "coap://[" + route + "]:5683" + resource.getURI();
+							CoapClient coapClient = new CoapClient();
 							coapClient.setURI(coapURI);
 							CoapResponse coapResponse = coapClient.get();
 							if (coapResponse != null) {
