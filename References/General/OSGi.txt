@@ -1,0 +1,20 @@
+OSGi
+http://www.vogella.com/tutorials/OSGi/article.html
+
+OSGi Bundles
+http://www.javaworld.com/article/2077837/java-se/hello--osgi--part-1--bundles-for-beginners.html?page=5
+
+OSGi Declarative Services
+http://www.vogella.com/tutorials/OSGiServices/article.html
+http://wiki.osgi.org/wiki/Declarative_Services#Examples
+http://www.noway.es/OSGI-Declarative-Services-Components-Tutorial
+
+OSGi Declarative Services with Karaf
+http://sully6768.blogspot.ie/2012/09/scr-components-with-karaf.html
+
+OSGi Equinox deployment
+http://devblog.virtage.com/2012/08/osgi-with-equinox-for-beginners-overview/
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=371101
+
+OSGi uses directive
+http://spring.io/blog/2008/10/20/understanding-the-osgi-uses-directive/

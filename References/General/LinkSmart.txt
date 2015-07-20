@@ -1,0 +1,6 @@
+LinkSmart Overview
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki
+
+Calculator Service example
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial_DS_2x
+

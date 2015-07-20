@@ -1,0 +1,5 @@
+Interoperability in IoT
+http://blogs.windows.com/buildingapps/2015/07/01/working-toward-universal-interoperability-in-iot/
+
+AllJoyn
+https://en.wikipedia.org/wiki/AllJoyn

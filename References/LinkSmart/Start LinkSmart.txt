@@ -1,0 +1,23 @@
+START LinkSmart
+
+1. Open Terminal.
+
+2. Enter command:
+sudo su
+
+3. Enter password for user:
+12345678
+
+4. Go to the LinkSmart distribution installation folder:
+cd Downloads/linksmart-main-distribution-2.2.1-bin/bin
+
+5. Run Karaf:
+./karaf
+
+6. Check the LinkSmart status. Open Firefox and go to the following URL:
+http://localhost:8082/LinkSmartStatus
+
+Additional information:
+
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial_Binary_22

@@ -1,0 +1,5 @@
+Software Agents
+
+https://developer.apple.com/library/mac/technotes/tn2083/_index.html#//apple_ref/doc/uid/DTS10003794-CH1-SUBSECTION2
+
+https://en.wikipedia.org/wiki/Software_agent

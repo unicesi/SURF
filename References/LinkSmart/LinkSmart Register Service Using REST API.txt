@@ -1,0 +1,50 @@
+curl -X POST http://localhost:8082/NetworkManager -d '{"Endpoint":"http://localhost:9090/cxf/services/HelloWorldService", "BackboneName":"eu.linksmart.network.backbone.impl.soap.BackboneSOAPImpl", "Attributes":{ "description":"Hello World Service", "sid":"HelloWorldService"} }'
+
+curl 'http://localhost:8082/SOAPTunneling/0/0.0.0.7423362115406239025?description="HelloWorldService"'
+
+curl 'http://localhost:8082/SOAPTunneling/0/0.0.0.6116103637786710081?description="MyLSservice Desctiption"'
+
+curl -X DELETE 'http://localhost:8082/NetworkManager/0.0.0.1985959750089821006'
+
+"0.0.0.1985959750089821006"
+
+--
+Registering external web service as LinkSmart service [does not work]
+
+curl -X POST http://localhost:8082/NetworkManager -d '{"Endpoint":"http://www.restfulwebservices.net/wcf/WeatherForecastService.svc", "BackboneName":"eu.linksmart.network.backbone.impl.soap.BackboneSOAPImpl", "Attributes":{ "description":"WeatherForecastService", "sid":"xmethods.weatherforecast"} }'
+
+curl -X DELETE 'http://localhost:8082/NetworkManager/0.0.0.7808248266365707162'
+
+curl -X DELETE 'http://localhost:8082/NetworkManager/0.0.0.7423362115406239025'
+
+
+--
+Registering external web service as LinkSmart service [does not work]
+
+http://wsf.cdyne.com/WeatherWS/Weather.asmx/GetCityForecastByZIP?ZIP=10021
+
+curl -X POST http://localhost:8082/NetworkManager -d '{"Endpoint":"http://wsf.cdyne.com/WeatherWS/Weather.asmx", "BackboneName":"eu.linksmart.network.backbone.impl.soap.BackboneSOAPImpl", "Attributes":{ "description":"WeatherForecast", "sid":"wsf.cdyne.com.weatherws"} }'
+
+Virtual Address: 0.0.0.4462282294298427939
+
+curl 'http://localhost:8082/NetworkManager?description="WeatherForecast"'
+
+curl 'http://localhost:8082/SOAPTunneling/0/0.0.0.4462282294298427939?description="WeatherForecast"'
+
+http://localhost:8082/SOAPTunneling/0/0.0.0.4462282294298427939
+
+http://localhost:8084/UnforeseenEventService/webresources/events/getTrafficCollision?street=a
+
+--
+Registering REST web service as LinkSmart local service [does not work]
+
+curl -X POST http://localhost:8082/NetworkManager -d '{"Endpoint":"http://localhost:8084/UnforeseenEventService/webresources/events", "BackboneName":"eu.linksmart.network.backbone.impl.soap.BackboneSOAPImpl", "Attributes":{ "description":"UnforeseenEvent", "sid":"tcd.scss.dsg.unforeseeneventservice"} }'
+
+--
+Registering SOAP web service as LinkSmart local service
+
+curl -X POST http://localhost:8082/NetworkManager -d '{"Endpoint":"http://localhost:8084/RoutingServiceSOAPAdapter/RoutingServiceSOAP", "BackboneName":"eu.linksmart.network.backbone.impl.soap.BackboneSOAPImpl", "Attributes":{ "description":"RoutingServiceSOAP", "sid":"tcd.scss.surf.RoutingServiceSOAP"} }'
+
+0.0.0.7654930367786889669
+
+curl 'http://localhost:8082/SOAPTunneling/0/0.0.0.7654930367786889669?description="RoutingServiceSOAP"'

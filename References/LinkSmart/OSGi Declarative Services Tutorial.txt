@@ -1,0 +1,240 @@
+DECLARATIVE SERVICES IN OSGi
+
+1. Setting up the Development Environment
+
+1.1 Current development system
+
+This guide was developed and tested on Mac OS X 10.10.3 using Eclipse IDE for Java EE Developers Mars Release with Java 1.8.0 update 45.
+
+The guide was tested on Linux Mint 17.1 Cinnamon 64-bit virtual machine using Eclipse IDE for Java EE Developers Mars Release with OpenJDK 7.
+
+1.2 Required tools
+
+– Java Development Kit 6 or newer
+– Eclipse IDE for Java EE Developers 4.4 or newer (Luna release or newer)
+
+2. Hello World OSGi Declarative Service Example
+
+Before getting started, open the Plug-in Development perspective through the menu option «Window > Perspective > Open perspective > Other...».
+
+2.1 Creating the service provider
+
+– Go to «File > New > Plug-in Project». Enter «CalculatorService» as the project's name. Select as Target Platform the option «an OSGi framework» and leave «Equinox» selected in the dropdown list. Click «Next >».
+– Unselect the option «Generate an activator». Click «Next >».
+– Unselect the option «Create a plug-in using one of the templates». Click «Finish».
+
+– Create the following interface. Just copy the following code, then select the «src» folder inside your project and paste it; Eclipse will create the package and source file for you.
+
+package co.icesi.i2t.example.calculator;
+
+public interface Calculator {
+
+	public static final String DESCRIPTION = "Calculator for beginners";
+	public static final String SID = "Calculator";
+
+	public int add(int a, int b);
+
+}
+
+– Create an implementation for the previous interface.
+
+package co.icesi.i2t.example.calculator.impl;
+
+import co.icesi.i2t.example.calculator.Calculator;
+
+public class CalculatorImpl implements Calculator {
+
+	@Override
+	public int add(int a, int b) {
+		int result = a + b;
+		return result;
+	}
+
+}
+
+– Create a new folder in your project called OSGI-INF. Go to «File > New > Folder».
+– Right click over the OSGI-INF folder created and go to «File > New > Component Definition».
+– Under «Component Definition Information» select as «Class» the implementation class for the Calculator «CalculatorImpl». Click «Finish».
+– Switch to the «Services» tab and under «Provided Services» add the Calculator interface.
+– Switch back to the «Overview» tab and under «Options» tick the «This component is immediately activated» checkbox.
+– Save the component definition file.
+– Open the «MANIFEST.MF» file located in the META-INF folder of your project.
+– Switch to the «Runtime» tab and under «Exported Packages» add the package containing the Calculator interface.
+– Save the manifest file.
+
+2.2 Creating the service consumer
+
+– Go to «File > New > Plug-in Project». Enter «CalculatorServiceConsumer» as the project's name. Select as Target Platform the option «an OSGi framework» and leave «Equinox» selected in the dropdown list. Click «Next >».
+– Unselect the option «Generate an activator». Click «Next >».
+– Unselect the option «Create a plug-in using one of the templates». Click «Finish».
+– The manifest file opens up. Switch over to the «Dependencies» tab and under «Imported Packages» add the package containing the Calculator interface from the service provider project.
+– Save the manifest file.
+– Create an implementation for the service consumer. Some errors might show up but they will be removed with the following steps.
+
+package co.icesi.i2t.example.consumer;
+
+import co.icesi.i2t.example.calculator.Calculator;
+
+public class CalculatorConsumer {
+
+    Calculator calcService;
+
+    public synchronized void onBind(Calculator calcService) {
+        this.calcService = calcService;
+        System.out.println(this.add(13, 29));
+    }
+
+    public synchronized void onUnbind(Calculator calcService) {
+        if (this.calcService == calcService) {
+            this.calcService = null;
+            }
+    }
+
+    public int add(int a, int b) {
+        return this.calcService.add(a, b);
+    }
+
+}
+
+– Create a new folder in your project called OSGI-INF. Go to «File > New > Folder».
+– Right click over the OSGI-INF folder created and go to «File > New > Component Definition».
+– Under «Component Definition Information» select as «Class» the implementation class for the Calculator «CalculatorConsumer». Click «Finish».
+– Switch to the «Services» tab and under «Referenced Services» add the Calculator interface.
+– Press «Edit...» and under Bind and Unbind enter the names of the onBind and onUnbind methods from the CalculatorConsumer class respectively.
+– Save the component definition file.
+
+2.3 Running the service
+
+– Open form the menu bar «Run > Run Configurations...».
+– On the right side options, select OSGi Framework.
+– Double click to create a new launch configuration or click on the «New launch configuration» button.
+– Give the launch configuration a name. For example «Calculator Service».
+– Under «Bundles», keep the newly created Calculator bundles selected and unselect all «Target Platform» bundles.
+– Under «Target Platform» select the following bundles:
+
++ org.apache.felix.gogo.command
++ org.apache.felix.gogo.runtime
++ org.apache.felix.gogo.shell
++ org.eclipse.equinox.console
++ org.eclipse.equinox.ds
++ org.eclipse.equinox.registry
++ org.eclipse.equinox.util
++ org.eclipse.osgi
++ org.eclipse.osgi.services
+
+– Press the «Add Required Bundles». Make sure that at least the following bundles were selected.
+
++ com.ibm.icu
++ javax.annotation
++ javax.inject
++ javax.servlet
++ javax.xml
++ org.apache.batik.css
++ org.apache.batik.util
++ org.apache.batik.util.gui
++ org.eclipse.ant.core
++ org.eclipse.core.commands
++ org.ecipse.core.contenttype
++ org.eclipse.core.databinding
++ org.eclipse.core.databinding.observable
++ org.eclipse.core.databinding.property
++ org.eclipse.core.expressions
++ org.eclipse.core.filesystem
++ org.eclipse.core.filesystem.java7
++ org.eclipse.core.filesystem.macosx (for Mac OS X only)
++ org.eclipse.core.filesystem.linux.x86_64 (for Linux only)
++ org.eclipse.core.jobs
++ org.eclipse.core.resources
++ org.eclipse.core.runtime
++ org.eclipse.core.runtime.compatibility.registry
++ org.eclipse.core.variables
++ org.eclipse.e4.core.commands
++ org.eclipse.e4.core.contexts
++ org.eclipse.e4.core.di
++ org.eclipse.e4.core.di.extensions
++ org.eclipse.e4.core.services
++ org.eclipse.e4.ui.bindings
++ org.eclipse.e4.ui.css.core
++ org.eclipse.e4.ui.css.swt
++ org.eclipse.e4.ui.css.swt.theme
++ org.eclipse.e4.ui.di
++ org.eclipse.e4.ui.model.workbench
++ org.eclipse.e4.ui.services
++ org.eclipse.e4.ui.gtk (for Linux only)
++ org.eclipse.e4.ui.widgets
++ org.eclipse.e4.ui.workbench
++ org.eclipse.e4.ui.workbench.addons.swt
++ org.eclipse.e4.ui.workbench.renderers.swt
++ org.eclipse.e4.ui.workbench.renderers.swt.cocoa (for Mac OS X only)
++ org.eclipse.e4.ui.workbench.swt
++ org.eclipse.e4.ui.workbench3
++ org.eclipse.emf.common
++ org.eclipse.emf.ecore
++ org.eclipse.emf.ecore.change
++ org.eclipse.emf.ecore.xmi
++ org.eclipse.equinox.app
++ org.eclipse.equinox.bidi
++ org.eclipse.equinox.common
++ org.eclipse.equinox.event
++ org.eclipse.equinox.preferences
++ org.eclipse.help
++ org.eclipse.jface
++ org.eclipse.jface.databinding
++ org.eclipse.osgi.compatibility.state
++ org.eclipse.swt
++ org.eclipse.swt.cocoa.macosx.x86_64 (for Mac OS X only)
++ org.eclipse.swt.gtk.linux.x86_64 (for Linux only)
++ org.eclipse.ui
++ org.eclipse.ui.cocoa (for Mac OS X only)
++ org.eclipse.ui.trace
++ org.eclipse.ui.workbench
++ org.w3c.css.sac
++ org.w3c.dom.events
++ org.w3c.dom.smil
++ org.w3c.dom.svg
+
+– Set a start level of 3 for the bundle «org.eclipse.ui».
+– Press the «Validate Bundles» button. A pop up dialog should indicate that no problems were detected.
+– Switch to the «Arguments» tab and under «VM arguments» make sure the following arguments are set (including the leading dash).
+
+-Dosgi.requiredJavaVersion=1.7
+-XX:MaxPermSize=256m
+-Xms256m
+-Xmx1024m
+-Declipse.ignoreApp=true
+-Dosgi.noShutdown=true
+
+– The following arguments may show up when working with Mac OS X (including the leading dash):
+
+-XstartOnFirstThread
+-Dorg.eclipse.swt.internal.carbon.smallFonts
+-Xdock:icon=../Resources/Eclipse.icns
+
+– Add the following arguments (include the leading dash).
+
+-Dequinox.ds.error=true
+-Dequinox.ds.print=true
+
+– Switch to the «Settings» tab. Under «Configuration Area» tick the «Clear the configuration area before launching» option.
+– Press the «Apply» button.
+– Click «Run».
+
+On the OSGi console, you should see the output from the CalculatorConsumer's onBind method, like this:
+
+osgi> 42
+
+or this:
+
+42
+osgi >
+
+2.4 Common issues when running the service
+
+If the message «The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.» shows up in the console, close Eclipse, and delete the following files.
+
+«workspace folder»/.metadata/.plugins/org.eclipse.core.resources/.snap
+«workspace folder»/.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi
+
+REFERENCES
+
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial_DS_2x

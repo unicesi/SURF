@@ -1,0 +1,24 @@
+Simple lightweight Java HTTP server
+
+http://stackoverflow.com/questions/3732109/simple-http-server-in-java-using-only-java-se-api
+http://stackoverflow.com/questions/1186328/embedded-http-server-in-swing-java-app
+
+Under Eclipse their is a "forbidden API" issue, however, since Java SE 6 the libraries are included in Oracle's JRE.
+Solution: http://stackoverflow.com/questions/13155734/eclipse-cant-recognize-com-sun-net-httpserver-httpserver-package [See second best answer]
+
+Full documentation:
+http://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/package-summary.html
+
+--
+
+Publishing REST web services in the lightweight Java HTTP server
+http://crunchify.com/how-to-start-embedded-http-jersey-server-during-java-application-startup/
+
+Maven jersey-server dependency: http://mvnrepository.com/artifact/com.sun.jersey/jersey-server/1.18.1
+
+Oracle reference:
+http://docs.oracle.com/javase/7/embedded/jes/7.0/docs/html/application/overview.htm
+http://docs.oracle.com/javase/7/embedded/jes/7.0/docs/html/application/samples.htm#CIHJDHIJ
+
+Other references:
+https://github.com/jersey/jersey/blob/master/examples/helloworld-pure-jax-rs/src/main/java/org/glassfish/jersey/examples/helloworld/jaxrs/App.java
