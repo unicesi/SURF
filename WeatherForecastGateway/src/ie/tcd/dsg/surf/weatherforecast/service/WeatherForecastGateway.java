@@ -27,6 +27,8 @@ import ie.tcd.dsg.surf.weatherforecast.gateway.WeatherForecast;
 import ie.tcd.dsg.surf.weatherforecast.utils.WeatherMeasurement;
 
 /**
+ * RESTful web service providing a REST API to query temperature and humidity information from MOTEs that 
+ * provide it as a CoAP resource.
  * 
  * @author Andrés Paz <afpaz at icesi.edu.co>, I2T Research Group, Universidad Icesi, Cali - Colombia
  * 
@@ -35,8 +37,9 @@ import ie.tcd.dsg.surf.weatherforecast.utils.WeatherMeasurement;
 public class WeatherForecastGateway {
 
 	/**
+	 * Returns an XML with both temperature and humidity measurements from the discovered MOTEs.
 	 * 
-	 * @return
+	 * @return An XML with both temperature and humidity measurements from the discovered MOTEs.
 	 */
 	@GET
 	@Path("all")
@@ -46,8 +49,9 @@ public class WeatherForecastGateway {
 	}
 
 	/**
+	 * Returns an XML with temperature measurements from the discovered MOTEs.
 	 * 
-	 * @return
+	 * @return An XML with temperature measurements from the discovered MOTEs.
 	 */
 	@GET
 	@Path("temperature")
@@ -57,8 +61,9 @@ public class WeatherForecastGateway {
 	}
 
 	/**
+	 * Returns an XML with humidity measurements from the discovered MOTEs.
 	 * 
-	 * @return
+	 * @return An XML with humidity measurements from the discovered MOTEs.
 	 */
 	@GET
 	@Path("humidity")
@@ -68,10 +73,11 @@ public class WeatherForecastGateway {
 	}
 
 	/**
+	 * Returns an XML with the specified measurement for the MOTE matching the given ID.
 	 * 
-	 * @param measurement
-	 * @param id
-	 * @return
+	 * @param measurement The required measurement: temperature, humidity or all.
+	 * @param id The ID of the MOTE.
+	 * @return An XML with the specified measurement for the MOTE matching the given ID.
 	 */
 	@GET
 	@Path("{measurement}/{id}")
@@ -92,40 +98,42 @@ public class WeatherForecastGateway {
 	}
 	
 	/**
+	 * Maps CoAP response codes to HTTP response codes and returns the HTTP response.
 	 * 
-	 * @param responseCode
-	 * @param message
-	 * @return
+	 * @param responseCode The CoAP response code.
+	 * @param message The message to be added to the response.
+	 * @return An HTTP response with the matched HTTP response code for the given CoAP response code.
 	 */
 	private Response getErrorResponse(String responseCode, String message) {
 		Response response;
 		switch (responseCode) {
-		case "4.00":
-		case "4.02":
+		// CoAP client side errors:
+		case "4.00": // CoAP Bad request
+		case "4.02": // CoAP Bad option
 			response = Response.status(Response.Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.01":
+		case "4.01": // CoAP Unauthorized
 			response = Response.status(Response.Status.UNAUTHORIZED).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.03":
+		case "4.03": // CoAP Forbidden
 			response = Response.status(Response.Status.FORBIDDEN).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.04":
-		case "4.05":
+		case "4.04": // CoAP Not Found
+		case "4.05": // CoAP Method Not Allowed
 			response = Response.status(Response.Status.NOT_FOUND).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.06":
-		case "4.13":
+		case "4.06": // CoAP Not Acceptable
+		case "4.13": // CoAP Request Entity Too Large
 			response = Response.status(Response.Status.NOT_ACCEPTABLE).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.12":
+		case "4.12": // CoAP Precondition Failed
 			response = Response.status(Response.Status.PRECONDITION_FAILED).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
-		case "4.15":
+		case "4.15": // CoAP Unsupported Content-Format
 			response = Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
 
-		default:
+		default: // All CoAP's server side errors are defaulted to HTTP 500 Internal Server Error.
 			response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(message).type(MediaType.TEXT_PLAIN).build();
 			break;
 		}

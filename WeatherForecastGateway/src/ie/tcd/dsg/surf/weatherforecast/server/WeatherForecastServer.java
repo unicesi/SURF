@@ -42,6 +42,8 @@ import com.sun.net.httpserver.HttpServer;
 import ie.tcd.dsg.surf.weatherforecast.gateway.WeatherForecast;
 
 /**
+ * HTTP Server publishing a REST API to query temperature and humidity information from MOTEs that 
+ * provide it as a CoAP resource.
  * 
  * @author Andrés Paz <afpaz at icesi.edu.co>, I2T Research Group, Universidad Icesi, Cali - Colombia
  * 
@@ -50,33 +52,39 @@ import ie.tcd.dsg.surf.weatherforecast.gateway.WeatherForecast;
 public class WeatherForecastServer {
 
 	/**
-	 * 
+	 * HTTP server port. Default selected port is 8085.
 	 */
 	private static final int SERVER_PORT = 8085;
 	/**
-	 * 
-	 */
-	private static final String DISCOVERY_SERVER_PROPERTY = "address";
-	/**
-	 * 
+	 * The name of the properties file where the address to the discovery server is stored.
 	 */
 	private static final String PROPERTIES_FILE_NAME = "gateway.properties";
+	/**
+	 * The discovery server property name in the properties file.
+	 */
+	private static final String DISCOVERY_SERVER_PROPERTY = "address";
 	
 	/**
+	 * The main method. Looks for the properties file to retrieve the discovery server's address.
+	 * Then starts the HTTP server and the discovery thread.
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// Input stream to read the properties file.
 		InputStream inputStream = null;
 		try {
 			System.out.println("[INFO] Starting Weather Forecast Server...\n");
+			// Create and start the HTTP server.
 			HttpServer weatherForecastServer = createHttpServer();
 			System.out.println(String.format("\n[INFO] Weather Forecast Server started with WADL available at " + "%sapplication.wadl",	getWeatherForecastURI()));
 			System.out.println("\n[INFO] Started Weather Forecast Server successfully.");
 			System.out.println("[INFO] Looking for discovery server address...");
+			// Get the WeatherForecast instance.
 			WeatherForecast weatherForecast = WeatherForecast.getInstance();
 			int resources = 0;
 			String discoveryServerURI = null;
+			// Read the properties file. If the discovery server's address is IPv6, add square brackets if needed.
 			Properties properties = new Properties();
 			try {
 				String propertiesFilePath = System.getProperty("user.home") + File.separator + PROPERTIES_FILE_NAME;
@@ -95,16 +103,20 @@ public class WeatherForecastServer {
 						discoveryServerURI = "http://" + discoveryServerURI;
 					}
 					System.out.println("[INFO] Starting discovery thread...");
+					// Start the discovery thread.
 					weatherForecast.discoverAllResources(discoveryServerURI);
 					System.out.println("[INFO] Discovery thread started.");
 				} else {
+					// If the properties file was found but the property was not, use the Test URI.
 					System.out.println("\n[WARNING] Property not found. Using test URI...");
 					resources = weatherForecast.discoverAllResources();
 				}
 			} catch (FileNotFoundException e) {
+				// If the properties file was not found, use the Test URI.
 				System.out.println("\n[ERROR] Properties file not found. Using test URI...");
 				resources = weatherForecast.discoverAllResources();
 			}  finally {
+				// Close the stream to the properties file.
 				if (inputStream != null) {
 					try {
 						inputStream.close();
@@ -113,6 +125,7 @@ public class WeatherForecastServer {
 					}
 				}
 			}
+			// Show amount of discovered resources.
 			while (true) {
 				System.out.println("\n[INFO] Discovering Weather Forecast Routes...");
 				resources = weatherForecast.getResourcesDiscovered();
@@ -128,6 +141,11 @@ public class WeatherForecastServer {
 		}
 	}
 	
+//	/**
+//	 * Stops the server.
+//	 * 
+//	 * @param weatherForecastServer The HTTP server to be stopped.
+//	 */
 //	private static void stopServer (HttpServer weatherForecastServer) {
 //		System.out.println("\n[INFO] Enter \"stop\" to stop the server.\n");
 //		System.out.print("weather@raspberry_pi ~ $ ");
@@ -143,27 +161,35 @@ public class WeatherForecastServer {
 //	}
 
 	/**
+	 * Creates and starts a lightweight HTTP server. Uses the HTTP server bundled with Java SE.
+	 * Requires Java SE 6 or later.
 	 * 
-	 * @return
-	 * @throws IOException
+	 * @return The HTTP server.
+	 * @throws IOException If any error occurs in the process.
 	 */
 	private static HttpServer createHttpServer() throws IOException {
+		// Configure resources that will be published in the HTTP server.
 		ResourceConfig weatherForecastResourceConfig = new ResourceConfig();
+		// All resources are RESTful web services located in the package ie.tcd.dsg.surf.weatherforecast.service.
 		weatherForecastResourceConfig.packages("ie.tcd.dsg.surf.weatherforecast.service");
+		// Create the HTTP server with the previous configuration.
+		// Note: The server is started automatically.
 		return JdkHttpServerFactory.createHttpServer(getWeatherForecastURI(), weatherForecastResourceConfig);
 	}
 
 	/**
+	 * Returns the server's URI.
 	 * 
-	 * @return
+	 * @return The server's URI.
 	 */
 	private static URI getWeatherForecastURI() {
 		return UriBuilder.fromUri("http://" + getHostName() + "/").port(SERVER_PORT).build();
 	}
 
 	/**
+	 * Returns the server's host name.
 	 * 
-	 * @return
+	 * @return The server's host name.
 	 */
 	private static String getHostName() {
 		String hostName = "localhost";
