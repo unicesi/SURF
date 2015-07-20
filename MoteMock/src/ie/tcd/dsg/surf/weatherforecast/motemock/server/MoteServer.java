@@ -22,6 +22,7 @@ import org.eclipse.californium.core.CoapServer;
 import ie.tcd.dsg.surf.weatherforecast.motemock.resources.MoteMock;
 
 /**
+ * CoAP Server publishing temperature and humidity information.
  * 
  * @author Andrés Paz, I2T Research Group, Universidad Icesi, Cali - Colombia
  * 
@@ -29,6 +30,7 @@ import ie.tcd.dsg.surf.weatherforecast.motemock.resources.MoteMock;
 public class MoteServer extends CoapServer {
 
 	/**
+	 * The main method. Creates and starts the CoAP server.
 	 * 
 	 * @param args
 	 */
@@ -42,8 +44,9 @@ public class MoteServer extends CoapServer {
     }
     
     /**
+     * Builds a server instance. Adds a MoteMock resource.
      * 
-     * @throws SocketException
+     * @throws SocketException If any error occurs.
      */
     public MoteServer() throws SocketException {
         add(new MoteMock());

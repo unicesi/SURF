@@ -18,11 +18,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>TestCoapServer</groupId>
-	<artifactId>TestCoapServer</artifactId>
+	<groupId>MoteMock</groupId>
+	<artifactId>MoteMock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	
-	<name>Test CoAP Server</name>
+	<name>Mote Mock</name>
 	
 	<url>https://github.com/unicesi/surf</url>
 	<inceptionYear>2015</inceptionYear>
