@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="/home/christian/Applications/Eclipse JEE Mars/plugins/javax.xml.soap_1.2.0.v201005080501/lib/saaj.jar"/>
 	<classpathentry kind="lib" path="/home/christian/Applications/Eclipse JEE Mars/plugins/javax.wsdl_1.6.2.v201012040545.jar"/>
 	<classpathentry kind="lib" path="/home/christian/Applications/Eclipse JEE Mars/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"/>
-	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
