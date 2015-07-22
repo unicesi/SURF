@@ -1,0 +1,41 @@
+Consuming RESTful web service from OSGi bundle [does not work]
+
+1. Install jersey-core and jersey-client bundles in the OSGi container. Follow instructions in the following link:
+https://vzurczak.wordpress.com/2014/09/30/web-applications-with-osgi-working-with-jersey/
+
+2. Implement OSGi bundle with the web service client.
+http://www.mkyong.com/webservices/jax-rs/restful-java-client-with-jersey-client/
+
+
+OSGi - JAX-RS Connector
+http://eclipsesource.com/blogs/2012/11/28/consuming-rest-services-in-osgi-the-cool-way/
+http://eclipsesource.com/blogs/2012/01/23/an-osgi-jax-rs-connector-part-1-publishing-rest-services/
+https://github.com/hstaudacher/osgi-jax-rs-connector
+
+Other references:
+http://www.eggs.de/content/dam/eggs%20unimedia/papers/Third-Party%20Libraries%20and%20OSGi%20-%20a%20complicated%20relationship.pdf
+
+--
+Consuming RESTful web service from OSGi bundle the right way [does not work with LinkSmart]
+
+https://jersey.java.net/documentation/latest/client.html
+
+http://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api/2.0.1
+
+--
+Consuming RESTful web service from OSGi bundle deployed in Karaf and CXF the right way [works with LinkSmart]
+
+https://github.com/Talend/tesb-rt-se/blob/master/examples/cxf/jaxrs-advanced/client/src/main/java/client/RESTClient.java
+
+Other references:
+http://fandry.blogspot.ie/2012/06/how-to-create-simple-cxf-based-jax-rs.html
+http://cxf.apache.org/docs/jax-rs.html [Seems to explains why consuming a RESTful web service with the JAX-RS API doesn't work with LinkSmart]
+
+For the client consuming the LinkSmart OSGi service it seems to be necessary to add the JavaMail.jar to the classpath.
+http://stackoverflow.com/questions/12227035/unable-to-find-required-classes-javax-activation-datahandler-and-javax-mail-int
+
+--
+Last resort option:
+
+Perform the request directly using java.net.URL API and read the InputStream to get the response.
+http://svn.apache.org/viewvc/cxf/trunk/distribution/src/main/release/samples/jax_rs/basic/src/main/java/demo/jaxrs/client/Client.java?view=markup

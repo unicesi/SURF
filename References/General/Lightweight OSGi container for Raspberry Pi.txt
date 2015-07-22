@@ -1,0 +1,2 @@
+Lightweight OSGi container for Raspberry Pi
+http://eclipsesource.com/blogs/2014/02/18/a-lightweight-java-application-server-on-raspberry-pi/

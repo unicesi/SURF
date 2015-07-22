@@ -1,0 +1,9 @@
+CoAP Server and Client examples with Californium
+https://www.eclipsecon.org/france2014/sites/default/files/slides/Hands-on%20with%20CoAP.pdf
+
+Source code: https://github.com/eclipse/californium [of samples too]
+
+Maven dependency: http://mvnrepository.com/artifact/org.eclipse.californium/californium-core/1.0.0-M3
+
+Californium resources:
+https://people.inf.ethz.ch/mkovatsc/resources/californium/cf-thesis.pdf

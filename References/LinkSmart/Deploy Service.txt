@@ -1,0 +1,7 @@
+Deploy OSGi service in LinkSmart
+
+1. Right click on the OSGi project in Eclipse and go to «Run As» and select «Maven Install».
+
+2. Wait for Maven to build the project's JAR file.
+
+3. Copy the generated JAR from the project's «target» directory and paste it in LinkSmart's «deploy» directory.

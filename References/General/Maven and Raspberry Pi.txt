@@ -1,0 +1,5 @@
+Maven package JAR and WAR for Raspberry Pi
+
+JAR: https://github.com/eclipsesource/raspberry-pi-examples/blob/master/com.eclipsesource.iot.photosensor-example/pom.xml
+
+WAR: http://stackoverflow.com/questions/3116605/how-can-i-build-war-with-maven-in-eclipse

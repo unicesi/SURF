@@ -1,0 +1,28 @@
+OPTION 1 [Didn't work; hit dead end]
+
+1. Download/Checkout LinkSmart source code [Select projects according to file "LinkSmart SDK.xlsx"]
+
+2. Install Apache Ant
+[optional: remove proxy configuration] http://askubuntu.com/questions/222938/how-do-i-reset-proxy-in-terminal-to-automatic-if-not-connected-via-proxy
+[install ant] sudo apt-get install ant
+[optional: find ant installation directory] http://unix.stackexchange.com/questions/19369/how-to-find-the-installation-path-for-a-software-under-linux
+[set environment variables] https://docs.oracle.com/cd/E19316-01/820-7054/gickh/index.html
+
+3. Build the LinkSmart SDK using Ant [Ant build script is nowhere to be found]
+
+References
+
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial%20Environment%202x
+
+-------------
+
+OPTION 2
+
+1. https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial_LinkSmart_HelloWorld_Service_22
+
+Some errors might come out, the following link fills some gaps from the previous tutorial.
+
+https://www.linksmart.eu/redmine/projects/linksmart-opensource/wiki/Tutorial_Deploy_Service_(Hello_World_Part_1_2x)
+
+Watch out for the naming of the service being developed. All references to it should be written in the same way (preferably to be the name of the service interface).
+

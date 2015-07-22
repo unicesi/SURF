@@ -1,0 +1,15 @@
+Deploy JAX-WS web services on Tomcat
+http://www.mkyong.com/webservices/jax-ws/deploy-jax-ws-web-services-on-tomcat/
+
+REST client in Java
+http://www.javacodegeeks.com/2012/09/simple-rest-client-in-java.html
+
+Creating SOAP web service and client in Eclipse
+http://crunchify.com/create-and-deploy-simple-web-service-and-web-service-client-in-eclipse/
+
+Creating web service and client with JAX-WS
+https://docs.oracle.com/javaee/6/tutorial/doc/bnayn.html
+http://docs.oracle.com/javaee/5/tutorial/doc/bnayn.html
+
+How to call a JAX-WS web service via HTTP GET
+http://stackoverflow.com/questions/25411762/invoke-a-soap-web-service-method-with-simple-parameters-from-browser-using-only
