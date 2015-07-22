@@ -177,6 +177,7 @@ public class DiscoveryThread extends Thread {
 		    			Element route = (Element) nNode;
 		    			boolean added = this.discoveredRoutes.add(route.getTextContent());
 		    			if (added && !newRoutesFound) {
+		    				System.out.println("[INFO{dt}] Discovered route: " + route.getTextContent());
 		    				newRoutesFound = true;
 		    			}
 		        	}
