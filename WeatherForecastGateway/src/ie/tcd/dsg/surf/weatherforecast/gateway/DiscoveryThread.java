@@ -133,6 +133,7 @@ public class DiscoveryThread extends Thread {
 					// If no new routes were found, do nothing.
 					System.out.println("[INFO{dt}] No new routes were found. Trying again in 10 seconds.");
 				}
+				// Print all discovered routes.
 				printDiscoveredRoutes();
 			} else {
 				// If the response has no content, display the HTTP error code.
@@ -194,6 +195,9 @@ public class DiscoveryThread extends Thread {
 		return newRoutesFound;
 	}
 	
+	/**
+	 * Prints to the console all discovered routes.
+	 */
 	private void printDiscoveredRoutes() {
 		System.out.println("[INFO] Discovered routes:");
 		for (String discoveredRoute : discoveredRoutes) {

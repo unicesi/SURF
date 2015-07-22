@@ -248,6 +248,7 @@ public class WeatherForecast {
 	 * 		<mote uri="CoAP URI to the mote">
 	 * 			<temperature unit="The unit of measurement>Temperature reading value</temperature>
 	 * 			<humidity unit="The unit of measurement">Humidity reading value</humidity>
+	 * 			<value>Any other sensor value</value>
 	 * 		</mote>
 	 * 		<error>
 	 * 	 		<uri>The URI to the resource</uri>
@@ -261,73 +262,51 @@ public class WeatherForecast {
 		String response = null;
 		if (this.resources.size() > 1) {
 			response = "<measurements>";
-			if (measurement == WeatherMeasurement.ALL) {
-				for (WebLink resource : resources.keySet()) {
-					String resourceURI = resource.getURI();
-					String route = resources.get(resource);
-					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
-						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
-							
-								String coapURI = "coap://" + route + ":5683" + resource.getURI();
-								CoapClient coapClient = new CoapClient();
-								coapClient.setURI(coapURI);
-								CoapResponse coapResponse = coapClient.get();
-								if (coapResponse != null) {
-									if (coapResponse.getCode() == ResponseCode.CONTENT) {
-										response += "<mote uri=\"" + coapURI + "\">";
-										if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
-											String[] resourceValues = coapResponse.getResponseText().split(";");
-											response += "<temperature unit=\"ºC\">" + resourceValues[0] + "</temperature>"
-													+ "<humidity unit=\"%\">" + resourceValues[1] + "</humidity>";
-										} else {
-											response += "<value>" + coapResponse.getResponseText() + "</value>";
-										}
-										response += "</mote>";
+			for (WebLink resource : resources.keySet()) {
+				String resourceURI = resource.getURI();
+				String route = resources.get(resource);
+				if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
+					if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
+						// Build a CoAP resource URI with the resource's route and path.
+						String coapURI = "coap://" + route + ":5683" + resource.getURI();
+						// Build a CoAP client.
+						CoapClient coapClient = new CoapClient();
+						// Set the CoAP client's target URI with the CoAP resource URI.
+						coapClient.setURI(coapURI);
+						// Perform a GET request.
+						CoapResponse coapResponse = coapClient.get();
+						if (coapResponse != null) {
+							// If the response has content, retrieve it, otherwise get the CoAP response code, and build an XML to return.
+							if (coapResponse.getCode() == ResponseCode.CONTENT) {
+								response += "<mote uri=\"" + coapURI + "\">";
+								// If the response comes from the temperature and humidity resource split the retrieved values accordingly
+								// and add them to the XML.
+								// Otherwise use a generic tag to capture the response contents.
+								if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
+									String[] resourceValues = coapResponse.getResponseText().split(";");
+									String temperature = "<temperature unit=\"ºC\">" + resourceValues[0] + "</temperature>";
+									String humidity = "<humidity unit=\"%\">" + resourceValues[1] + "</humidity>";
+									if (measurement == WeatherMeasurement.ALL) {
+										response += temperature + humidity;
+									} else if (measurement == WeatherMeasurement.TEMPERATURE) {
+										response += temperature;
+									} else if (measurement == WeatherMeasurement.HUMIDITY) {
+										response += humidity;
 									} else {
 										response += ""
 												+ "<error>"
-													+ "<uri>" + resourceURI + "</uri>"
-													+ "<code>" + coapResponse.getCode() + "</code>"
+													+ "Measurement " + measurement + "is not valid. Try again ."
 												+ "</error>";
 									}
 								} else {
-									response += ""
-											+ "<error>"
-												+ "<uri>" + resourceURI + "</uri>"
-												+ "<message>" + "No response from resource" + "</message>"
-											+ "</error>";
-								}
-						}
-					}
-				}
-			} else {
-				for (WebLink resource : resources.keySet()) {
-					String resourceURI = resource.getURI();
-					String route = resources.get(resource);
-					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
-						String coapURI = "coap://" + route + ":5683" + resource.getURI();
-						CoapClient coapClient = new CoapClient();
-						coapClient.setURI(coapURI);
-						CoapResponse coapResponse = coapClient.get();
-						if (coapResponse != null) {
-							if (coapResponse.getCode() == ResponseCode.CONTENT) {
-								response += "<mote uri=\"" + coapURI + "\">";
-								if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
-									String[] resourceValues = coapResponse.getResponseText().split(";");
-									if (measurement == WeatherMeasurement.TEMPERATURE) {
-										response += "<temperature>" + resourceValues[0] + "</temperature>";
-									} else {
-										response += "<humidity>" + resourceValues[1] + "</humidity>";
-									}
-								} else {
-									response += "<value>" + coapResponse.getResponseText() + "</value";
+									response += "<value>" + coapResponse.getResponseText() + "</value>";
 								}
 								response += "</mote>";
 							} else {
 								response += ""
 										+ "<error>"
 											+ "<uri>" + resourceURI + "</uri>"
-											+ "<message>" + coapResponse.getCode() + "</message>"
+											+ "<coapcode>" + coapResponse.getCode() + "</coapcode>"
 										+ "</error>";
 							}
 						} else {
