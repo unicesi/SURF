@@ -133,6 +133,7 @@ public class DiscoveryThread extends Thread {
 					// If no new routes were found, do nothing.
 					System.out.println("[INFO{dt}] No new routes were found. Trying again in 10 seconds.");
 				}
+				printDiscoveredRoutes();
 			} else {
 				// If the response has no content, display the HTTP error code.
 				System.out.println("[ERROR{dt}] Failed with HTTP error code: " + response.getStatus());
@@ -177,7 +178,7 @@ public class DiscoveryThread extends Thread {
 		    			Element route = (Element) nNode;
 		    			boolean added = this.discoveredRoutes.add(route.getTextContent());
 		    			if (added && !newRoutesFound) {
-		    				System.out.println("[INFO{dt}] Discovered route: " + route.getTextContent());
+		    				System.out.println("[INFO{dt}] New discovered route: " + route.getTextContent());
 		    				newRoutesFound = true;
 		    			}
 		        	}
@@ -191,6 +192,13 @@ public class DiscoveryThread extends Thread {
 		    e.printStackTrace();
 		}
 		return newRoutesFound;
+	}
+	
+	private void printDiscoveredRoutes() {
+		System.out.println("[INFO] Discovered routes:");
+		for (String discoveredRoute : discoveredRoutes) {
+			System.out.println(discoveredRoute);
+		}
 	}
 	
 }
