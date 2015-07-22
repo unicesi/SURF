@@ -171,10 +171,10 @@ public class WeatherForecast {
 			for (WebLink webLink : discoveredResources) {
 				if (webLink != null) {
 					if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
-						if (webLink.getURI().endsWith(WEATHER_RESOURCE_PATH)) {
+//						if (webLink.getURI().endsWith(WEATHER_RESOURCE_PATH)) {
 							this.resources.put(webLink, route);
 							System.out.println("[INFO] Resource discovered in path: " + webLink);
-						}
+//						}
 					}
 				} else {
 					System.out.println("[WARNING] WebLink is null.");
@@ -267,7 +267,7 @@ public class WeatherForecast {
 					String route = resources.get(resource);
 					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
 						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
-							if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
+							
 								String coapURI = "coap://" + route + ":5683" + resource.getURI();
 								CoapClient coapClient = new CoapClient();
 								coapClient.setURI(coapURI);
@@ -275,9 +275,13 @@ public class WeatherForecast {
 								if (coapResponse != null) {
 									if (coapResponse.getCode() == ResponseCode.CONTENT) {
 										response += "<mote uri=\"" + coapURI + "\">";
-										String[] resourceValues = coapResponse.getResponseText().split(";");
-										response += "<temperature unit=\"ºC\">" + resourceValues[0] + "</temperature>"
-												+ "<humidity unit=\"%\">" + resourceValues[1] + "</humidity>";
+										if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
+											String[] resourceValues = coapResponse.getResponseText().split(";");
+											response += "<temperature unit=\"ºC\">" + resourceValues[0] + "</temperature>"
+													+ "<humidity unit=\"%\">" + resourceValues[1] + "</humidity>";
+										} else {
+											response += "<value>" + coapResponse.getResponseText() + "</value>";
+										}
 										response += "</mote>";
 									} else {
 										response += ""
@@ -293,7 +297,6 @@ public class WeatherForecast {
 												+ "<message>" + "No response from resource" + "</message>"
 											+ "</error>";
 								}
-							}
 						}
 					}
 				}
@@ -309,11 +312,15 @@ public class WeatherForecast {
 						if (coapResponse != null) {
 							if (coapResponse.getCode() == ResponseCode.CONTENT) {
 								response += "<mote uri=\"" + coapURI + "\">";
-								String[] resourceValues = coapResponse.getResponseText().split(";");
-								if (measurement == WeatherMeasurement.TEMPERATURE) {
-									response += "<temperature>" + resourceValues[0] + "</temperature>";
+								if (resourceURI.endsWith(WEATHER_RESOURCE_PATH)) {
+									String[] resourceValues = coapResponse.getResponseText().split(";");
+									if (measurement == WeatherMeasurement.TEMPERATURE) {
+										response += "<temperature>" + resourceValues[0] + "</temperature>";
+									} else {
+										response += "<humidity>" + resourceValues[1] + "</humidity>";
+									}
 								} else {
-									response += "<humidity>" + resourceValues[1] + "</humidity>";
+									response += "<value>" + coapResponse.getResponseText() + "</value";
 								}
 								response += "</mote>";
 							} else {
