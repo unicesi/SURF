@@ -129,7 +129,7 @@ public class WeatherForecastServer {
 			while (true) {
 				System.out.println("\n[INFO] Discovering Weather Forecast Routes...");
 				resources = weatherForecast.getResourcesDiscovered();
-				System.out.println("\n[INFO] Total resources discovered: " + resources);
+				System.out.println("\n[INFO] Total routes discovered: " + resources);
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {

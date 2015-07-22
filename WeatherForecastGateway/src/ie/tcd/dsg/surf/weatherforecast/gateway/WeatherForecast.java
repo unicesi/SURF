@@ -190,7 +190,7 @@ public class WeatherForecast {
 	 * @return The total number of resources that have been discovered.
 	 */
 	public int getResourcesDiscovered() {
-		return this.resources.size();
+		return this.discoveredRoutes.size();
 	}
 	
 	/**
@@ -266,7 +266,7 @@ public class WeatherForecast {
 				for (WebLink resource : resources) {
 					String resourceURI = resource.getURI();
 					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
-						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
+//						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
 							// Build a CoAP resource URI with the resource's route and path.
 							String coapURI = "coap://" + route + ":5683" + resource.getURI();
 							// Build a CoAP client.
@@ -316,7 +316,7 @@ public class WeatherForecast {
 											+ "<message>" + "No response from resource" + "</message>"
 										+ "</error>";
 							}
-						}
+//						}
 					}
 				}
 			}
