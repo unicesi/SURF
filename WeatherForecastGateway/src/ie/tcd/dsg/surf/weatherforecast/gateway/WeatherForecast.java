@@ -64,9 +64,9 @@ public class WeatherForecast {
 	 */
 	private DiscoveryThread discoveryThread;
 	/**
-	 * The CoAP resources discovered stored as (Path, IP address) pairs.
+	 * The CoAP resources discovered stored as (IP address, Set of CoAP resources) pairs.
 	 */
-	private Map<WebLink, String> resources;
+	private Map<String, Set<WebLink>> resources;
 	/**
 	 * The discovered routes. A route is represented as an IP address.
 	 */
@@ -108,12 +108,14 @@ public class WeatherForecast {
 		Set<WebLink> discoveredResources = coapClient.discover();
 		// Filter the discovered resources.
 		if (discoveredResources != null) {
+			Set<WebLink> filteredResources = new HashSet<>();
 			for (WebLink webLink : discoveredResources) {
 				if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
-					this.resources.put(webLink, MOTE_SERVER_ADDRESS);
+					filteredResources.add(webLink);
 					System.out.println("[INFO] Resource discovered in path: " + webLink);
 				}
 			}
+			this.resources.put(MOTE_SERVER_ADDRESS, filteredResources);
 		}
 		return this.resources.size();
 	}
@@ -132,13 +134,13 @@ public class WeatherForecast {
 	 * Retrieves discovered routes from the discovery thread and for each one discovers its resources.
 	 */
 	public void notifyNewRoutesFound() {
-		discoveredRoutes = this.discoveryThread.getDiscoveredRoutes();
-//		for (String route : discoveredRoutes) {
-//			if (this.discoveredRoutes.add(route)) {
-//				System.out.println("[INFO] Discovering resources in route: " + route + " ...");
-//				discoverAllResourcesInRoute(route);
-//			}
-//		}
+		Set<String> discoveredRoutes = this.discoveryThread.getDiscoveredRoutes();
+		for (String route : discoveredRoutes) {
+			if (this.discoveredRoutes.add(route)) {
+				System.out.println("[INFO] Discovering resources in route: " + route + " ...");
+				discoverAllResourcesInRoute(route);
+			}
+		}
 	}
 	
 	/**
@@ -148,7 +150,7 @@ public class WeatherForecast {
 	 * IPv6 address. In the case of an IPv6 address, it may contain square brackets ([ and ])
 	 * but if it doesn't they are added automatically.
 	 */
-	private Set<WebLink> discoverAllResourcesInRoute(String route) {
+	private void discoverAllResourcesInRoute(String route) {
 		// Build a CoAP client.
 		CoapClient coapClient = new CoapClient();
 		// If the given route is an IPv6 address, check if it contains square brackets.
@@ -166,31 +168,32 @@ public class WeatherForecast {
 		System.out.println("[INFO] CoAP client set to URI: " + coapClient.getURI());
 		// Discover resources.
 		Set<WebLink> discoveredResources = coapClient.discover();
-		return discoveredResources;
 		// Filter the discovered resources.
-//		if (discoveredResources != null) {
-//			for (WebLink webLink : discoveredResources) {
-//				if (webLink != null) {
-//					if (!webLink.getURI().endsWith(COAP_DISCOVERY_PATH)) {
-//						this.resources.put(webLink, route);
-//						System.out.println("[INFO] Resource discovered in path: " + webLink);
-//					}
-//				} else {
-//					System.out.println("[WARNING] WebLink is null.");
-//				}
-//			}
-//		} else {
-//			System.out.println("[INFO] No resources in route: " + route);
-//		}
+		Set<WebLink> filteredResources = new HashSet<>();
+		if (discoveredResources != null) {
+			for (WebLink discoveredResource : discoveredResources) {
+				if (discoveredResource != null) {
+					if (!discoveredResource.getURI().endsWith(COAP_DISCOVERY_PATH)) {
+						filteredResources.add(discoveredResource);
+						System.out.println("[INFO] Resource discovered in path: " + discoveredResource);
+					}
+				} else {
+					System.out.println("[WARNING] WebLink is null.");
+				}
+			}
+		} else {
+			System.out.println("[INFO] No resources in route: " + route);
+		}
+		this.resources.put(route, filteredResources);
 	}
 	
 	/**
-	 * Returns the total number of resources that have been discovered in the different routes.
+	 * Returns the total number of routes that have been discovered.
 	 * 
-	 * @return The total number of resources that have been discovered.
+	 * @return The total number of routes that have been discovered.
 	 */
-	public int getResourcesDiscovered() {
-		return this.discoveredRoutes.size();
+	public int getRoutesDiscovered() {
+		return this.resources.size();
 	}
 	
 	/**
@@ -212,26 +215,27 @@ public class WeatherForecast {
 		// Build a CoAP resource path with the given MOTE ID and measurement.
 		WebLink resource = new WebLink("/" + id + (measurement.equals(WeatherMeasurement.ALL) ? "" : "/" + measurement));
 		String response = null;
-		// Validate if the resource path exists in the collection of discovered CoAP resources.
-		if (resources.containsKey(resource)) {
-			// If the resource exists, get its host IP address.
-			String route = resources.get(resource);
-			// Build a CoAP client.
-			CoapClient coapClient = new CoapClient();
-			// Set the CoAP client's target URI with the hosts IP address and resource path.
-			coapClient.setURI("coap://" + route + ":5683" + resource.getURI());
-			// Perform a GET request.
-			CoapResponse coapResponse = coapClient.get();
-			if (coapResponse != null) {
-				// If the response has content, return it. Otherwise return the CoAP response code.
-				if (coapResponse.getCode() == ResponseCode.CONTENT) {
-					response = coapResponse.getResponseText();
-				} else {
-					response = coapResponse.getCode().toString();
-				}
-			}
-		}
-		return response;
+//		// Validate if the resource path exists in the collection of discovered CoAP resources.
+//		if (resources.containsKey(resource)) {
+//			// If the resource exists, get its host IP address.
+//			String route = resources.get(resource);
+//			// Build a CoAP client.
+//			CoapClient coapClient = new CoapClient();
+//			// Set the CoAP client's target URI with the hosts IP address and resource path.
+//			coapClient.setURI("coap://" + route + ":5683" + resource.getURI());
+//			// Perform a GET request.
+//			CoapResponse coapResponse = coapClient.get();
+//			if (coapResponse != null) {
+//				// If the response has content, return it. Otherwise return the CoAP response code.
+//				if (coapResponse.getCode() == ResponseCode.CONTENT) {
+//					response = coapResponse.getResponseText();
+//				} else {
+//					response = coapResponse.getCode().toString();
+//				}
+//			}
+//		}
+//		return response;
+		return "Sorry, this operation is no longer available.";
 	}
 	
 	/**
@@ -259,13 +263,13 @@ public class WeatherForecast {
 	 */
 	public String queryAllResources(WeatherMeasurement measurement) {
 		String response = null;
-		if (this.discoveredRoutes.size() > 0) {
-			response = "<measurements>";
-			for (String route : discoveredRoutes) {
-				Set<WebLink> resources = discoverAllResourcesInRoute(route);
+		if (this.resources.size() > 0) {
+			response = "<resources>";
+			for (String route : this.resources.keySet()) {
+				Set<WebLink> resources = this.resources.get(route);
 				for (WebLink resource : resources) {
 					String resourceURI = resource.getURI();
-					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
+//					if (!resourceURI.endsWith(COAP_DISCOVERY_PATH)) {
 //						if (!resourceURI.endsWith(WeatherMeasurement.TEMPERATURE.getValue()) && !resourceURI.endsWith(WeatherMeasurement.HUMIDITY.getValue())) {
 							// Build a CoAP resource URI with the resource's route and path.
 							String coapURI = "coap://" + route + ":5683" + resource.getURI();
@@ -275,10 +279,10 @@ public class WeatherForecast {
 							coapClient.setURI(coapURI);
 							// Perform a GET request.
 							CoapResponse coapResponse = coapClient.get();
+							response += "<resource uri=\"" + coapURI + "\">";
 							if (coapResponse != null) {
 								// If the response has content, retrieve it, otherwise get the CoAP response code, and build an XML to return.
 								if (coapResponse.getCode() == ResponseCode.CONTENT) {
-									response += "<mote uri=\"" + coapURI + "\">";
 									// If the response comes from the temperature and humidity resource split the retrieved values accordingly
 									// and add them to the XML.
 									// Otherwise use a generic tag to capture the response contents.
@@ -295,32 +299,32 @@ public class WeatherForecast {
 										} else {
 											response += ""
 													+ "<error>"
-														+ "Measurement " + measurement + "is not valid. Try again ."
+														+ "<message>Measurement " + measurement + "is not valid. Try again.</message>"
 													+ "</error>";
 										}
 									} else {
 										response += "<value>" + coapResponse.getResponseText() + "</value>";
 									}
-									response += "</mote>";
+									
 								} else {
 									response += ""
 											+ "<error>"
-												+ "<uri>" + resourceURI + "</uri>"
 												+ "<coapcode>" + coapResponse.getCode() + "</coapcode>"
+												+ "<message>" + coapResponse.getCode().name() + "</message>"
 											+ "</error>";
 								}
 							} else {
 								response += ""
 										+ "<error>"
-											+ "<uri>" + resourceURI + "</uri>"
 											+ "<message>" + "No response from resource" + "</message>"
 										+ "</error>";
 							}
+							response += "</resource>";
 //						}
-					}
+//					}
 				}
 			}
-			response += "</measurements>";
+			response += "</resources>";
 		}
 		return response;
 	}

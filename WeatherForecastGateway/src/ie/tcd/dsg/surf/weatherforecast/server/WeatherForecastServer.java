@@ -128,7 +128,7 @@ public class WeatherForecastServer {
 			// Show amount of discovered resources.
 			while (true) {
 				System.out.println("\n[INFO] Discovering Weather Forecast Routes...");
-				resources = weatherForecast.getResourcesDiscovered();
+				resources = weatherForecast.getRoutesDiscovered();
 				System.out.println("\n[INFO] Total routes discovered: " + resources);
 				try {
 					Thread.sleep(10000);
