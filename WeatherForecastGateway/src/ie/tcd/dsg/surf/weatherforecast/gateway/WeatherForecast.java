@@ -132,13 +132,13 @@ public class WeatherForecast {
 	 * Retrieves discovered routes from the discovery thread and for each one discovers its resources.
 	 */
 	public void notifyNewRoutesFound() {
-		Set<String> discoveredRoutes = this.discoveryThread.getDiscoveredRoutes();
-		for (String route : discoveredRoutes) {
-			if (this.discoveredRoutes.add(route)) {
-				System.out.println("[INFO] Discovering resources in route: " + route + " ...");
+		discoveredRoutes = this.discoveryThread.getDiscoveredRoutes();
+//		for (String route : discoveredRoutes) {
+//			if (this.discoveredRoutes.add(route)) {
+//				System.out.println("[INFO] Discovering resources in route: " + route + " ...");
 //				discoverAllResourcesInRoute(route);
-			}
-		}
+//			}
+//		}
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class WeatherForecast {
 	 */
 	public String queryAllResources(WeatherMeasurement measurement) {
 		String response = null;
-		if (this.resources.size() > 0) {
+		if (this.discoveredRoutes.size() > 0) {
 			response = "<measurements>";
 			for (String route : discoveredRoutes) {
 				Set<WebLink> resources = discoverAllResourcesInRoute(route);
