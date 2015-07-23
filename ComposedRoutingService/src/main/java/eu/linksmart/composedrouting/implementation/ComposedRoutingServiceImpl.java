@@ -65,33 +65,33 @@ public class ComposedRoutingServiceImpl implements ComposedRoutingService {
 
 	/* constants */
 	private static final String CXF_SERVICES_PATH = "http://localhost:9090/cxf/services/";
-	private static final String ENDPOINT = CXF_SERVICES_PATH + "ComposedRoutingService";
+	private static final String ENDPOINT = CXF_SERVICES_PATH + SID;
 
 	/* fields */
 	private Logger mLogger = Logger.getLogger(ComposedRoutingServiceImpl.class.getName());
 	protected ComponentContext mContext;
-	private Registration composedRoutingServiceVirtualAddress = null;
+	private Registration serviceVirtualAddress = null;
 	private String backbone = null;
 
 	@Reference(name = "NetworkManager", cardinality = ReferenceCardinality.MANDATORY_UNARY, bind = "bindNetworkManager", unbind = "unbindNetworkManager", policy = ReferencePolicy.DYNAMIC)
 	private NetworkManager networkManager;
 
 	protected void bindNetworkManager(NetworkManager nm) {
-		mLogger.debug("ComposedRoutingService::binding networkmanager");
+		mLogger.debug(SID + "::binding networkmanager");
 		networkManager = nm;
 	}
 
 	protected void unbindNetworkManager(NetworkManager nm) {
-		mLogger.debug("ComposedRoutingService::un-binding networkmanager");
+		mLogger.debug(SID + "::un-binding networkmanager");
 		networkManager = null;
 	}
 
 	@Activate
 	protected void activate(ComponentContext context) {
-		mLogger.info("Activating ComposedRoutingService...");
+		mLogger.info("Activating " + SID + "...");
 		initBackbone();
 		invokeRegisterService();
-		mLogger.info("Started ComposedRoutingService");
+		mLogger.info("Started " + SID);
 	}
 
 	private void initBackbone() {
@@ -113,10 +113,10 @@ public class ComposedRoutingServiceImpl implements ComposedRoutingService {
 
 	private void invokeRegisterService() {
 		try {
-			composedRoutingServiceVirtualAddress = networkManager.registerService(
+			serviceVirtualAddress = networkManager.registerService(
 					new Part[] { new Part(ServiceAttribute.DESCRIPTION.name(), DESCRIPTION) }, ENDPOINT, backbone);
 			mLogger.info(
-					"Created Virtual Address: " + composedRoutingServiceVirtualAddress.getVirtualAddressAsString());
+					"Created Virtual Address: " + serviceVirtualAddress.getVirtualAddressAsString());
 		} catch (RemoteException e) {
 			mLogger.error(e.getMessage(), e.getCause());
 		}
@@ -124,13 +124,13 @@ public class ComposedRoutingServiceImpl implements ComposedRoutingService {
 
 	@Deactivate
 	protected void deactivate(ComponentContext context) {
-		mLogger.info("Stopping ComposedRoutingService...");
+		mLogger.info("Stopping " + SID + "...");
 		invokeRemoveService();
-		mLogger.info("Stopped ComposedRoutingService");
+		mLogger.info("Stopped " + SID);
 	}
 
 	private void invokeRemoveService() {
-		mLogger.info("Removed virtual address:" + composedRoutingServiceVirtualAddress.getVirtualAddressAsString());
+		mLogger.info("Removed virtual address:" + serviceVirtualAddress.getVirtualAddressAsString());
 	}
 
 	private static final String BASE_URL = "http://localhost:8084/RoutingService/webresources";
