@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 import org.osgi.service.component.ComponentContext;
 
 import eu.linksmart.network.ServiceAttribute;
+import eu.linksmart.MyLSservice.IMyLSservice;
 import eu.linksmart.composedrouting.service.ComposedRoutingService;
 import eu.linksmart.network.Registration;
 import eu.linksmart.network.networkmanager.NetworkManager;
@@ -72,6 +73,19 @@ public class ComposedRoutingServiceImpl implements ComposedRoutingService {
 	protected ComponentContext mContext;
 	private Registration serviceVirtualAddress = null;
 	private String backbone = null;
+	
+	@Reference(name = "MyLSservice", cardinality = ReferenceCardinality.MANDATORY_UNARY, bind = "onBind", unbind = "onUnbind", policy = ReferencePolicy.DYNAMIC)
+	private IMyLSservice myLSservice;
+	
+	public synchronized void onBind(IMyLSservice myLSservice) {
+		this.myLSservice = myLSservice;
+	}
+	
+	public synchronized void onUnbind(IMyLSservice myLSservice) {
+		if (this.myLSservice == myLSservice) {
+			this.myLSservice = null;
+		}
+	}
 
 	@Reference(name = "NetworkManager", cardinality = ReferenceCardinality.MANDATORY_UNARY, bind = "bindNetworkManager", unbind = "unbindNetworkManager", policy = ReferencePolicy.DYNAMIC)
 	private NetworkManager networkManager;
@@ -159,10 +173,11 @@ public class ComposedRoutingServiceImpl implements ComposedRoutingService {
 		// END
 		
 		// Using CXF WebClient works under LinkSmart
-		WebClient client = WebClient.create(BASE_URL + "/" + SERVICE + "/" + OPERATION + QUERY);
-		client.accept("application/xml");
-		String response = client.get(String.class);
-		return response;
+//		WebClient client = WebClient.create(BASE_URL + "/" + SERVICE + "/" + OPERATION + QUERY);
+//		client.accept("application/xml");
+//		String response = client.get(String.class);
+//		return response;
+		return "Result: " + this.myLSservice.dosomething(2, 3);
 		
 	}
 	
